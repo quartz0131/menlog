@@ -632,3 +632,68 @@ main,
     font-size: 16px;
   }
 }
+
+
+/* v5: hard-fix favorite row so the heart + text stay on one line */
+.entry-form .check-row {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 14px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 14px 18px;
+}
+
+.entry-form .check-row input[type="checkbox"] {
+  grid-column: 1;
+  justify-self: start;
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  min-height: 30px !important;
+  margin: 0 !important;
+}
+
+.entry-form .check-row .favorite-copy {
+  grid-column: 2;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+  width: 100%;
+  color: var(--text);
+  white-space: nowrap !important;
+}
+
+.entry-form .check-row .favorite-heart {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.entry-form .check-row .favorite-copy strong {
+  flex: 0 0 auto;
+  display: inline-block;
+  margin: 0;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  line-height: 1.2;
+}
+
+@media (max-width: 430px) {
+  .entry-form .check-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+    padding: 13px 16px;
+    column-gap: 12px;
+  }
+
+  .entry-form .check-row .favorite-copy strong {
+    font-size: 16px;
+  }
+}

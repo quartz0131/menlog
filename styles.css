@@ -477,3 +477,39 @@ dialog::backdrop { background: rgba(31,22,18,.48); backdrop-filter: blur(3px); }
   .month-track { background: #3a302b; }
   .install-hint { border-color: #6f4032; }
 }
+
+/* iPhone Safari: date/time inputs can keep a native intrinsic width and overflow. */
+.entry-form,
+.entry-form label,
+.form-row,
+.form-row > *,
+.two-columns > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.entry-form input,
+.entry-form textarea,
+.entry-form select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.entry-form input[type="date"],
+.entry-form input[type="time"],
+.entry-form input[type="datetime-local"] {
+  -webkit-appearance: none;
+  appearance: none;
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+@media (max-width: 430px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  .app-shell { width: 100%; max-width: 100%; overflow-x: clip; }
+  .entry-form { width: 100%; max-width: 100%; }
+  .form-row, .two-columns { width: 100%; max-width: 100%; }
+}

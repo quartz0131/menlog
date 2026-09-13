@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "menlog-static-v1";
+const CACHE_NAME = "menlog-static-v2";
 const APP_SHELL = [
   "./",
   "./index.html",

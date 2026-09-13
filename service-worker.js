@@ -1,10 +1,10 @@
 "use strict";
 
-const CACHE_NAME = "menlog-static-v3";
+const CACHE_NAME = "menlog-static-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=3",
+  "./styles.css?v=4",
   "./app.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",

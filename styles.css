@@ -575,3 +575,60 @@ main,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* v4: keep the "また食べたい" control on one line on iPhone */
+.check-row {
+  box-sizing: border-box;
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  gap: 10px;
+}
+
+.entry-form .check-row input[type="checkbox"] {
+  box-sizing: border-box;
+  display: block;
+  flex: 0 0 30px;
+  width: 30px !important;
+  height: 30px;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  min-height: 30px;
+  margin: 0 auto 0 0;
+  padding: 0;
+  border: 2px solid #8e8883;
+  border-radius: 9px;
+  box-shadow: none;
+  background: var(--surface-strong);
+  accent-color: var(--accent);
+}
+
+.check-row > span {
+  flex: 0 0 auto;
+  margin: 0;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.check-row > strong {
+  flex: 0 0 auto;
+  min-width: max-content;
+  margin: 0;
+  white-space: nowrap !important;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-height: 1.2;
+}
+
+@media (max-width: 430px) {
+  .check-row {
+    padding: 13px 16px;
+    gap: 9px;
+  }
+
+  .check-row > strong {
+    font-size: 16px;
+  }
+}

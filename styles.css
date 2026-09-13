@@ -478,8 +478,20 @@ dialog::backdrop { background: rgba(31,22,18,.48); backdrop-filter: blur(3px); }
   .install-hint { border-color: #6f4032; }
 }
 
-/* iPhone Safari: date/time inputs can keep a native intrinsic width and overflow. */
+
+/* v3 iPhone layout hardening */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.app-shell,
+main,
+.view,
 .entry-form,
+.entry-form > *,
 .entry-form label,
 .form-row,
 .form-row > *,
@@ -491,25 +503,75 @@ dialog::backdrop { background: rgba(31,22,18,.48); backdrop-filter: blur(3px); }
 .entry-form input,
 .entry-form textarea,
 .entry-form select {
+  box-sizing: border-box;
   display: block;
   width: 100%;
   max-width: 100%;
   min-width: 0;
 }
 
-.entry-form input[type="date"],
-.entry-form input[type="time"],
-.entry-form input[type="datetime-local"] {
+/*
+  iOS Safari can give date/time controls an intrinsic width wider than their
+  grid cell. The wrapper owns the visible border and clips the native control,
+  so it cannot escape the form card even if WebKit reports a larger width.
+*/
+.ios-control-wrap {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--surface-strong);
+  box-shadow: inset 0 1px 0 rgba(0,0,0,.02);
+}
+
+.ios-control-wrap input[type="date"],
+.ios-control-wrap input[type="time"] {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
   -webkit-appearance: none;
   appearance: none;
-  inline-size: 100%;
-  min-inline-size: 0;
-  max-inline-size: 100%;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .ios-control-wrap input[type="date"],
+  .ios-control-wrap input[type="time"] {
+    width: -webkit-fill-available !important;
+    max-width: -webkit-fill-available !important;
+  }
 }
 
 @media (max-width: 430px) {
-  html, body { max-width: 100%; overflow-x: hidden; }
-  .app-shell { width: 100%; max-width: 100%; overflow-x: clip; }
-  .entry-form { width: 100%; max-width: 100%; }
-  .form-row, .two-columns { width: 100%; max-width: 100%; }
+  .app-shell {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .entry-form {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .two-columns,
+  .form-row.two-columns:has(.rating-fieldset) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

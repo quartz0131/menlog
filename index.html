@@ -12,7 +12,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=3">
   <title>麺ログ</title>
 </head>
 <body>
@@ -51,11 +51,15 @@
           <div class="form-row two-columns">
             <label>
               <span>食べた日</span>
-              <input id="date" name="date" type="date" required>
+              <div class="ios-control-wrap">
+                <input id="date" name="date" type="date" required>
+              </div>
             </label>
             <label>
               <span>時間</span>
-              <input id="time" name="time" type="time">
+              <div class="ios-control-wrap">
+                <input id="time" name="time" type="time">
+              </div>
             </label>
           </div>
 

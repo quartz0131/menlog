@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#15110f">
+  <meta name="color-scheme" content="light dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="麺ログ">
+  <meta name="description" content="ラーメンを食べた日、店、メニュー、写真、価格、評価を端末内に記録する無料アプリ">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>麺ログ</title>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">RAMEN JOURNAL</p>
+        <h1>麺ログ</h1>
+      </div>
+      <button id="openSettings" class="icon-button" type="button" aria-label="設定とバックアップ">
+        <span aria-hidden="true">⚙︎</span>
+      </button>
+    </header>
+
+    <div id="installHint" class="install-hint" hidden>
+      <div>
+        <strong>ホーム画面に追加できます</strong>
+        <p>Safariの共有メニューから「ホーム画面に追加」→「Webアプリとして開く」を選びます。</p>
+      </div>
+      <button id="dismissInstallHint" class="text-button" type="button">閉じる</button>
+    </div>
+
+    <main>
+      <section id="viewAdd" class="view active" aria-labelledby="addTitle">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">NEW BOWL</p>
+            <h2 id="addTitle">今日の一杯を記録</h2>
+          </div>
+          <button id="resetForm" class="text-button" type="button">入力を戻す</button>
+        </div>
+
+        <form id="entryForm" class="entry-form" autocomplete="off">
+          <input id="entryId" type="hidden">
+
+          <div class="form-row two-columns">
+            <label>
+              <span>食べた日</span>
+              <input id="date" name="date" type="date" required>
+            </label>
+            <label>
+              <span>時間</span>
+              <input id="time" name="time" type="time">
+            </label>
+          </div>
+
+          <label>
+            <span>店名 <b>必須</b></span>
+            <input id="shop" name="shop" type="text" maxlength="80" placeholder="例：岩本屋" required>
+          </label>
+
+          <label>
+            <span>ラーメン名 <b>必須</b></span>
+            <input id="ramen" name="ramen" type="text" maxlength="100" placeholder="例：ネギトロラーメン" required>
+          </label>
+
+          <div class="form-row two-columns">
+            <label>
+              <span>価格</span>
+              <div class="input-suffix">
+                <input id="price" name="price" type="number" min="0" max="999999" step="1" inputmode="numeric" placeholder="1300">
+                <em>円</em>
+              </div>
+            </label>
+            <fieldset class="rating-fieldset">
+              <legend>評価</legend>
+              <div id="ratingPicker" class="rating-picker" role="radiogroup" aria-label="5段階評価">
+                <button type="button" data-rating="1" aria-label="1点">★</button>
+                <button type="button" data-rating="2" aria-label="2点">★</button>
+                <button type="button" data-rating="3" aria-label="3点">★</button>
+                <button type="button" data-rating="4" aria-label="4点">★</button>
+                <button type="button" data-rating="5" aria-label="5点">★</button>
+              </div>
+              <input id="rating" name="rating" type="hidden" value="0">
+            </fieldset>
+          </div>
+
+          <div class="photo-panel">
+            <div id="photoEmpty" class="photo-empty">
+              <span class="photo-icon" aria-hidden="true">📷</span>
+              <div>
+                <strong>写真を追加</strong>
+                <p>撮影または写真ライブラリから選択</p>
+              </div>
+            </div>
+            <img id="photoPreview" alt="選択したラーメン写真のプレビュー" hidden>
+            <div class="photo-actions">
+              <label class="secondary-button file-button">
+                写真を選ぶ
+                <input id="photoInput" type="file" accept="image/*">
+              </label>
+              <button id="removePhoto" class="text-button danger" type="button" hidden>写真を削除</button>
+            </div>
+          </div>
+
+          <label>
+            <span>メモ</span>
+            <textarea id="memo" name="memo" maxlength="1000" rows="4" placeholder="麺の硬さ、スープ、次回変えたいことなど"></textarea>
+          </label>
+
+          <label class="check-row">
+            <input id="favorite" name="favorite" type="checkbox">
+            <span aria-hidden="true">♥</span>
+            <strong>また食べたい</strong>
+          </label>
+
+          <button id="saveEntry" class="primary-button" type="submit">この一杯を保存</button>
+        </form>
+      </section>
+
+      <section id="viewHistory" class="view" aria-labelledby="historyTitle">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">HISTORY</p>
+            <h2 id="historyTitle">食べた記録</h2>
+          </div>
+          <span id="historyCount" class="count-badge">0杯</span>
+        </div>
+
+        <div class="search-row">
+          <span aria-hidden="true">⌕</span>
+          <input id="historySearch" type="search" placeholder="店名・ラーメン名・メモから検索">
+        </div>
+
+        <div id="historyList" class="card-list"></div>
+        <div id="historyEmpty" class="empty-state" hidden>
+          <span aria-hidden="true">🍜</span>
+          <h3>まだ記録がありません</h3>
+          <p>下の「記録」から最初の一杯を保存しましょう。</p>
+        </div>
+      </section>
+
+      <section id="viewCalendar" class="view" aria-labelledby="calendarTitle">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">CALENDAR</p>
+            <h2 id="calendarTitle">カレンダー</h2>
+          </div>
+        </div>
+
+        <div class="calendar-card">
+          <div class="calendar-toolbar">
+            <button id="calendarPrev" class="icon-button small" type="button" aria-label="前の月">‹</button>
+            <button id="calendarMonthLabel" class="calendar-title" type="button" aria-label="今月に戻る"></button>
+            <button id="calendarNext" class="icon-button small" type="button" aria-label="次の月">›</button>
+          </div>
+          <div class="calendar-weekdays" aria-hidden="true">
+            <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+          </div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+
+        <div class="selected-day-panel">
+          <div class="section-heading compact">
+            <h3 id="selectedDayTitle">日付を選択</h3>
+            <span id="selectedDayCount" class="count-badge">0杯</span>
+          </div>
+          <div id="selectedDayList" class="card-list compact-list"></div>
+        </div>
+      </section>
+
+      <section id="viewStats" class="view" aria-labelledby="statsTitle">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">STATS</p>
+            <h2 id="statsTitle">ラーメン集計</h2>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <article class="stat-card accent">
+            <span>総杯数</span>
+            <strong id="statTotal">0</strong>
+            <small>杯</small>
+          </article>
+          <article class="stat-card">
+            <span>今月</span>
+            <strong id="statMonth">0</strong>
+            <small>杯</small>
+          </article>
+          <article class="stat-card">
+            <span>合計金額</span>
+            <strong id="statSpent">0</strong>
+            <small>円</small>
+          </article>
+          <article class="stat-card">
+            <span>平均評価</span>
+            <strong id="statRating">–</strong>
+            <small>/ 5</small>
+          </article>
+        </div>
+
+        <article class="ranking-card">
+          <div class="ranking-header">
+            <h3>よく行く店</h3>
+            <span>上位5店</span>
+          </div>
+          <ol id="shopRanking" class="ranking-list"></ol>
+          <p id="shopRankingEmpty" class="muted">記録が増えると表示されます。</p>
+        </article>
+
+        <article class="ranking-card">
+          <div class="ranking-header">
+            <h3>月別の杯数</h3>
+            <span>直近6か月</span>
+          </div>
+          <div id="monthlyBars" class="monthly-bars"></div>
+        </article>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="メインメニュー">
+      <button class="nav-button active" type="button" data-view="Add">
+        <span aria-hidden="true">＋</span><small>記録</small>
+      </button>
+      <button class="nav-button" type="button" data-view="History">
+        <span aria-hidden="true">▤</span><small>履歴</small>
+      </button>
+      <button class="nav-button" type="button" data-view="Calendar">
+        <span aria-hidden="true">□</span><small>カレンダー</small>
+      </button>
+      <button class="nav-button" type="button" data-view="Stats">
+        <span aria-hidden="true">▥</span><small>集計</small>
+      </button>
+    </nav>
+  </div>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form method="dialog" class="dialog-shell">
+      <div class="dialog-header">
+        <div>
+          <p class="kicker">SETTINGS</p>
+          <h2>設定・バックアップ</h2>
+        </div>
+        <button class="icon-button small" value="close" aria-label="閉じる">×</button>
+      </div>
+
+      <section class="settings-section">
+        <h3>データの保管</h3>
+        <p>記録と写真はこの端末のブラウザ内に保存され、外部サーバーには送信されません。</p>
+        <div class="button-stack">
+          <button id="exportData" class="secondary-button" type="button">バックアップを書き出す</button>
+          <label class="secondary-button file-button full-width">
+            バックアップを読み込む
+            <input id="importData" type="file" accept="application/json,.json">
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-section danger-zone">
+        <h3>すべての記録を削除</h3>
+        <p>この操作は元に戻せません。必要なら先にバックアップを書き出してください。</p>
+        <button id="deleteAllData" class="danger-button" type="button">全記録を削除</button>
+      </section>
+
+      <p class="version-label">麺ログ version 1.0.0</p>
+    </form>
+  </dialog>
+
+  <dialog id="detailDialog" class="detail-dialog">
+    <article class="dialog-shell detail-shell">
+      <div class="dialog-header">
+        <div>
+          <p id="detailDate" class="kicker"></p>
+          <h2 id="detailRamen"></h2>
+        </div>
+        <button id="closeDetail" class="icon-button small" type="button" aria-label="閉じる">×</button>
+      </div>
+      <img id="detailPhoto" class="detail-photo" alt="ラーメンの写真" hidden>
+      <div class="detail-body">
+        <p id="detailShop" class="detail-shop"></p>
+        <div id="detailMeta" class="detail-meta"></div>
+        <p id="detailMemo" class="detail-memo"></p>
+      </div>
+      <div class="dialog-actions">
+        <button id="editEntry" class="secondary-button" type="button">編集</button>
+        <button id="deleteEntry" class="danger-button" type="button">削除</button>
+      </div>
+    </article>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
